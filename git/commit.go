@@ -21,6 +21,8 @@ func BranchAndCommit(changesDir string, c config.CommitConfig, baseBranch string
 
 	git([]string{"commit", "-m", c.Message, fmt.Sprintf("%s <%s>", c.Author, c.Email) }, []string{})
 
+	// rebase branch in case its old and out-of date
+	// TODO: review rebase strategy
 	if baseBranch != targetBranch {
 		git([]string{"rebase", "-X", "theirs"}, []string{})
 	}

@@ -23,3 +23,18 @@ func git(args []string, env []string) (string, string, error) {
 	return stdoutBs.String(), stderrBs.String(), nil
 }
 
+func IsFolderModified(folder string) (bool, error) {
+	// TODO: unit test
+	// ls-files is the way to reliably find changed files
+	// see https://stackoverflow.com/a/35375409 and docs https://git-scm.com/docs/git-ls-files
+	changed_files, _, err := git([]string{"ls-files", "--others", "--modified", "--deleted", "--exclude-standard", folder}, []string{})
+	if err != nil {
+		return false, err
+	}
+
+	if len(changed_files) > 0 {
+		return true, nil
+	} else {
+		return false, nil
+	}
+}
