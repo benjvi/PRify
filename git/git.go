@@ -17,7 +17,7 @@ func git(args []string, env []string) (string, string, error) {
 
 	err := cmd.Run()
 	if err != nil {
-		return "", "", fmt.Errorf("Git %s: %s (stderr: %s)", args, err, stderrBs.String())
+		return "", "", fmt.Errorf("git %s: %s (stderr: %s)", args, err, stderrBs.String())
 	}
 
 	return stdoutBs.String(), stderrBs.String(), nil

@@ -29,7 +29,7 @@ func BranchAndCommit(changesDir string, c config.CommitConfig, baseBranch string
 	// rebase branch in case its old and out-of date
 	// TODO: review rebase strategy
 	if baseBranch != targetBranch {
-		_,_,err := git([]string{"rebase", "-X", "theirs", baseBranch}, []string{})
+		_,_,err := git([]string{"rebase", "-X", "theirs", "--autostash", baseBranch}, []string{})
 		if err != nil {
 			return fmt.Errorf("error on git rebase: %s", err)
 		}
@@ -49,11 +49,6 @@ func ResolveBaseBranch(userSpecifiedBranch *string) (string, error) {
 		return "", fmt.Errorf("error reading current branch: %s", err)
 	}
 	return strings.TrimSpace(branch), nil
-}
-
-func fetchBranch(branch string) (bool, error) {
-	exists := true
-	return exists, nil
 }
 
 func checkoutBranch(baseBranch, targetBranch string) error {
