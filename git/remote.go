@@ -1,6 +1,6 @@
 package git
 
-func resolveRemote() error {
+/*func resolveRemote() error {
 	// if remote is explicitly specified in pushconfig, use that
 
 	// else if git repo has a default remote, use that
@@ -14,7 +14,7 @@ type remote struct {
 	name string
 	url string
 	remoteType string
-}
+}*/
 
 /*func fetchRemoteBranch() {
 	// fetch branch or fail
