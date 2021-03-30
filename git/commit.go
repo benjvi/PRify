@@ -21,7 +21,8 @@ func BranchAndCommit(changesDir string, c config.CommitConfig, baseBranch string
 	}
 
 	//TODO fmt.Sprintf("%s <%s>", *c.Author, *c.Email) }, for setting author
-	_,_,err = git([]string{"commit", "-m", c.Message}, []string{})
+	// ignore any pre-commit hooks with `-n`, because tools may not be available
+	_,_,err = git([]string{"commit", "-n", "-m", c.Message}, []string{})
 	if err != nil {
 		return fmt.Errorf("error on git commit: %s", err)
 	}
@@ -71,5 +72,4 @@ func checkoutBranch(baseBranch, targetBranch string) error {
 			return fmt.Errorf("error on git checkout  -b %s: %s", targetBranch, err)
 		}
 	}
-	return nil
 }

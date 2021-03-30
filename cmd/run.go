@@ -29,7 +29,7 @@ func run(cmd *cobra.Command, args []string) {
 	}
 	defer file.Close()
 
-	prifyConf, err := config.Parse(file)
+	userSuppliedConf, err := config.Parse(file)
 	if err != nil {
 		log.Fatalf("unable to parse %s: %q", confFile, err)
 	}
@@ -38,10 +38,10 @@ func run(cmd *cobra.Command, args []string) {
 	log.Printf("Loaded %s successfully", confFile)
 	// print loaded config
 	/*log.Println("Contents:")
-	s, _ := json.MarshalIndent(prifyConf, "", "\t")
+	s, _ := json.MarshalIndent(userSuppliedConf, "", "\t")
 	fmt.Println(string(s))*/
 
-	baseBranch, err := git.ResolveBaseBranch(prifyConf.Branch.Base)
+	baseBranch, err := git.ResolveBaseBranch(userSuppliedConf.Branch.Base)
 	if err != nil {
 		log.Fatalf("unable to resolve base branch: %s", err)
 	}
@@ -60,7 +60,7 @@ func run(cmd *cobra.Command, args []string) {
 	for _, dir := range changedDirs {
 		// late binding of the templates - we render right before the action so we have all the info
 		log.Printf("Rendering template for %q", dir)
-		commitR, tgtBranchR, err := template.RenderCommitConf(dir, prifyConf.Commit, baseBranch, prifyConf.Branch.Name)
+		commitR, tgtBranchR, err := template.RenderCommitConf(dir, userSuppliedConf.Commit, baseBranch, userSuppliedConf.Branch.Name)
 		if err != nil {
 			log.Fatalf("commit conf rendering for %q failed: %s", dir, err)
 		}
@@ -71,8 +71,11 @@ func run(cmd *cobra.Command, args []string) {
 			log.Fatalf("error committing changes: %s", err)
 		}
 
-
 		// push branch
+		err = git.MaybePush(userSuppliedConf.Push, tgtBranchR)
+		if err != nil {
+			log.Fatalf("error pushing branch: %s", err)
+		}
 
 		// create PR
 	}

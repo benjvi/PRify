@@ -10,6 +10,7 @@ func TestResolveBaseBranch(t *testing.T) {
 	if err != nil {
 		t.Errorf("error resolving branch: %s", err)
 	}
+	// will fail on a feature branch
 	want := "main"
 
 	if got != want {
