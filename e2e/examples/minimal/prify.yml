@@ -1,0 +1,4 @@
+branch:
+  name: "e2e-test-minimal-{{.subdir_name}}-{{.rand}}"
+commit:
+  message: "Autobumping manifests in {{.dir}} to update prod for {{.subdir_name}}"
