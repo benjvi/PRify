@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"prify/pr/github"
 	"prify/template"
 )
 
@@ -59,7 +60,7 @@ func run(cmd *cobra.Command, args []string) {
 
 	for _, dir := range changedDirs {
 		// late binding of the templates - we render right before the action so we have all the info
-		log.Printf("Rendering template for %q", dir)
+		log.Printf("Rendering commit templates for %q", dir)
 		commitR, tgtBranchR, err := template.RenderCommitConf(dir, userSuppliedConf.Commit, baseBranch, userSuppliedConf.Branch.Name)
 		if err != nil {
 			log.Fatalf("commit conf rendering for %q failed: %s", dir, err)
@@ -71,13 +72,24 @@ func run(cmd *cobra.Command, args []string) {
 			log.Fatalf("error committing changes: %s", err)
 		}
 
-		// push branch
 		err = git.MaybePush(userSuppliedConf.Push, tgtBranchR)
 		if err != nil {
 			log.Fatalf("error pushing branch: %s", err)
 		}
 
-		// create PR
+		if userSuppliedConf.PR != nil && userSuppliedConf.PR.Github != nil {
+			log.Printf("Rendering PR templates for %q", dir)
+			titleR, descriptionR, err := template.RenderPRConf(dir, baseBranch, userSuppliedConf.PR.Title, userSuppliedConf.PR.Description)
+			if err != nil {
+				log.Fatalf("PR template rendering for %q failed: %s", dir, err)
+			}
+
+			PRUrl, err := github.CreatePR(titleR, descriptionR, baseBranch)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Printf("Pull request created for %q from branch %q at: %s", dir, tgtBranchR, PRUrl)
+		}
 	}
 
 }

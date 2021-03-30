@@ -34,6 +34,25 @@ func RenderCommitConf(changesDirRef string, commitConfigTempl config.CommitConfi
 	return commitConfigOut, targetBranchOut, nil
 }
 
+func RenderPRConf(changesDirRef, baseBranchRef, titleTempl, descriptionTempl string) (string, string, error) {
+	extraData := map[string]string{
+		"subdir_name": changesDirRef,
+		"base_branch": baseBranchRef,
+	}
+
+	titleOut, err := render(titleTempl, extraData)
+	if err != nil {
+		return "", "", fmt.Errorf("couldn't render pr.title: %s", err)
+	}
+
+	descriptionOut, err := render(descriptionTempl, extraData)
+	if err != nil {
+		return "", "", fmt.Errorf("couldn't render pr.description: %s", err)
+	}
+
+	return titleOut, descriptionOut, nil
+}
+
 func render(templateS string, extraData map[string]string) (string, error) {
 	pwd, err := os.Getwd()
 	if err != nil {
