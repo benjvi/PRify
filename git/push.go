@@ -9,7 +9,6 @@ import (
 func MaybePush(pushConf *config.PushConfig, tgtBranch string) error {
 	if pushConf != nil {
 		// push config was present in the file, so we push
-		log.Printf("Push not specified in prify.yml, skipping")
 		// lookup remote to push to
 		remoteName, err := resolveRemote(pushConf)
 		if err != nil {
@@ -23,7 +22,7 @@ func MaybePush(pushConf *config.PushConfig, tgtBranch string) error {
 			return fmt.Errorf("error on git push: %s", err)
 		}
 	} else {
-		log.Printf("Push not specified in prify.yml, skipping")
+		log.Printf("Push not enabled in prify.yml, skipping")
 	}
 	return nil
 }

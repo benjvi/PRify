@@ -72,4 +72,5 @@ func checkoutBranch(baseBranch, targetBranch string) error {
 			return fmt.Errorf("error on git checkout  -b %s: %s", targetBranch, err)
 		}
 	}
+	return nil
 }

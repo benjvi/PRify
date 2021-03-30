@@ -3,11 +3,11 @@ package config
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"os"
+	"io"
 )
 
 
-func Parse(config *os.File) (*Config, error) {
+func Parse(config io.Reader) (*Config, error) {
 	c := &Config{}
 	d := yaml.NewDecoder(config)
 	err := d.Decode(c)
