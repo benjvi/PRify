@@ -2,25 +2,19 @@ package diff
 
 import (
 	"fmt"
-	"os"
+	"io/ioutil"
 	"prify/git"
 )
 
 
 func FindChangedDirectories() ([]string, error) {
-	file, err := os.Open(".")
-	if err != nil {
-		return nil, fmt.Errorf("unable to open PWD", err)
-	}
-	defer file.Close()
 
-	//TODO: exclude files, should be folders only
-	subDirs, err := file.Readdirnames(1000)
+	subDirs, err := listSubDirs()
 	if err != nil {
 		return nil, err
 	}
 
-	changedDirs := make([]string, len(subDirs))
+	changedDirs := []string{}
 	for _, dir := range subDirs {
 		modified, err := git.IsFolderModified(dir)
 		if err != nil {
@@ -31,4 +25,22 @@ func FindChangedDirectories() ([]string, error) {
 		}
 	}
 	return changedDirs, nil
+}
+
+func listSubDirs() ([]string, error) {
+	// output should be as find . -type d -d 1
+	files, err := ioutil.ReadDir("./")
+	if err != nil {
+		return nil, fmt.Errorf("error listing directories: %s", err)
+	}
+
+	subDirs := []string{}
+	for _, f := range files {
+		// excludes files and current directory
+		if (f.IsDir()) {
+			subDirs = append(subDirs, f.Name())
+		}
+	}
+
+	return subDirs, nil
 }

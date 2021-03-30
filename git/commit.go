@@ -2,29 +2,37 @@ package git
 
 import (
 	"fmt"
+	"log"
 	"prify/config"
+	"strings"
 )
 
 func BranchAndCommit(changesDir string, c config.CommitConfig, baseBranch string, targetBranch string) error {
 
 	// TODO: calculate if branch exists and make sure its up-to-date
-	branchExists := false
-	if branchExists {
-		git([]string{"checkout", targetBranch}, []string{})
-	} else {
-		// make sure we're on the base branch before creating new branch
-		git([]string{"checkout", baseBranch}, []string{})
-		git([]string{"checkout","-b", targetBranch}, []string{})
+	err := checkoutBranch(baseBranch, targetBranch)
+	if err != nil  {
+		return err
 	}
 
-	git([]string{"add", changesDir}, []string{})
+	_,_,err = git([]string{"add", changesDir}, []string{})
+	if err != nil {
+		return fmt.Errorf("error on git add %s: %s", changesDir, err)
+	}
 
-	git([]string{"commit", "-m", c.Message, fmt.Sprintf("%s <%s>", c.Author, c.Email) }, []string{})
+	//TODO fmt.Sprintf("%s <%s>", *c.Author, *c.Email) }, for setting author
+	_,_,err = git([]string{"commit", "-m", c.Message}, []string{})
+	if err != nil {
+		return fmt.Errorf("error on git commit: %s", err)
+	}
 
 	// rebase branch in case its old and out-of date
 	// TODO: review rebase strategy
 	if baseBranch != targetBranch {
-		git([]string{"rebase", "-X", "theirs"}, []string{})
+		_,_,err := git([]string{"rebase", "-X", "theirs", baseBranch}, []string{})
+		if err != nil {
+			return fmt.Errorf("error on git rebase: %s", err)
+		}
 	}
 
 	return nil
@@ -40,7 +48,7 @@ func ResolveBaseBranch(userSpecifiedBranch *string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error reading current branch: %s", err)
 	}
-	return branch, nil
+	return strings.TrimSpace(branch), nil
 }
 
 func fetchBranch(branch string) (bool, error) {
@@ -48,5 +56,25 @@ func fetchBranch(branch string) (bool, error) {
 	return exists, nil
 }
 
-func checkoutBranch(exists bool) {
+func checkoutBranch(baseBranch, targetBranch string) error {
+	branchExists := false
+	if branchExists {
+		log.Printf("Using existing branch %q", targetBranch)
+		_,_,err := git([]string{"checkout", targetBranch}, []string{})
+		if err != nil {
+			return fmt.Errorf("error on git checkout %s: %s", targetBranch, err)
+		}
+	} else {
+		// make sure we're on the base branch before creating new branch
+		log.Printf("Creating new branch %q", targetBranch)
+		_,_,err := git([]string{"checkout", baseBranch}, []string{})
+		if err != nil {
+			return fmt.Errorf("error on checkout %s: %s", baseBranch, err)
+		}
+		_,_,err = git([]string{"checkout","-b", targetBranch}, []string{})
+		if err != nil {
+			return fmt.Errorf("error on git checkout  -b %s: %s", targetBranch, err)
+		}
+	}
+	return nil
 }

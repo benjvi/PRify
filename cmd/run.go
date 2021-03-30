@@ -61,11 +61,15 @@ func run(cmd *cobra.Command, args []string) {
 
 	for _, dir := range changedDirs {
 		// late binding of the templates - we render right before the action so we have all the info
+		log.Printf("Rendering template for %q", dir)
 		commitR, tgtBranchR, err := template.RenderCommitConf(dir, prifyConf.Commit, baseBranch, prifyConf.Branch.Name)
 		if err != nil {
 			fmt.Errorf("commit conf rendering for %q failed: %s", )
 		}
+		println(commitR.Message)
+		println(tgtBranchR)
 
+		log.Printf("Committing changes for %q", dir)
 		err = git.BranchAndCommit(dir, commitR, baseBranch, tgtBranchR)
 		if err != nil {
 			log.Fatalf("error committing changes: %s", err)
