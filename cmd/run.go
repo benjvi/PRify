@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"prify/template"
 )
 
 const (
@@ -46,7 +47,7 @@ func run(cmd *cobra.Command, args []string) {
 	}
 	println(baseBranch)
 
-	// make sure that the base branch is up-to-date with upstream
+	// IMPROVEMENT: make sure that the base branch is up-to-date with upstream
 	// for the moment we assume this was done before running prify
 	/*upstream := git.ResolveUpstream()
 	git.UpdateBaseBranch(baseBranch, upstream)*/
@@ -58,18 +59,20 @@ func run(cmd *cobra.Command, args []string) {
 	}
 	fmt.Printf("%+v \n", changedDirs)
 
-	/*for dir in changedDirs {
-		// TODO: resolve templates in config
-
-		// commit to the specified branch
-		err = git.BranchAndCommit(dir, prifyConf.Commit, baseBranch, b.Name)
+	for _, dir := range changedDirs {
+		// late binding of the templates - we render right before the action so we have all the info
+		commitR, tgtBranchR, err := template.RenderCommitConf(dir, prifyConf.Commit, baseBranch, prifyConf.Branch.Name)
 		if err != nil {
-		log.Fatalf("error committing changes: %s", err)
+			fmt.Errorf("commit conf rendering for %q failed: %s", )
+		}
 
+		err = git.BranchAndCommit(dir, commitR, baseBranch, tgtBranchR)
+		if err != nil {
+			log.Fatalf("error committing changes: %s", err)
+		}
 		// push branch
 
 		// create PR
 	}
-	}*/
 
 }
