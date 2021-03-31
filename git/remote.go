@@ -25,7 +25,7 @@ func resolveRemote(userSuppliedConf *config.PushConfig) (string, error) {
 }
 
 func getRemoteNames() ([]string, error) {
-	stdOut,_,err := git([]string{"remote"}, []string{})
+	stdOut,_,err := git([]string{"remote"})
 	if err != nil {
 		return nil, fmt.Errorf("error running git remote: %s", err)
 	}

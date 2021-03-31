@@ -15,14 +15,14 @@ func BranchAndCommit(changesDir string, c config.CommitConfig, baseBranch string
 		return err
 	}
 
-	_,_,err = git([]string{"add", changesDir}, []string{})
+	_,_,err = git([]string{"add", changesDir})
 	if err != nil {
 		return fmt.Errorf("error on git add %s: %s", changesDir, err)
 	}
 
 	//TODO fmt.Sprintf("%s <%s>", *c.Author, *c.Email) }, for setting author
 	// ignore any pre-commit hooks with `-n`, because tools may not be available
-	_,_,err = git([]string{"commit", "-n", "-m", c.Message}, []string{})
+	_,_,err = git([]string{"commit", "-n", "-m", c.Message})
 	if err != nil {
 		return fmt.Errorf("error on git commit: %s", err)
 	}
@@ -30,7 +30,7 @@ func BranchAndCommit(changesDir string, c config.CommitConfig, baseBranch string
 	// rebase branch in case its old and out-of date
 	// TODO: review rebase strategy
 	if baseBranch != targetBranch {
-		_,_,err := git([]string{"rebase", "-X", "theirs", "--autostash", baseBranch}, []string{})
+		_,_,err := git([]string{"rebase", "-X", "theirs", "--autostash", baseBranch})
 		if err != nil {
 			return fmt.Errorf("error on git rebase: %s", err)
 		}
@@ -45,7 +45,7 @@ func ResolveBaseBranch(userSpecifiedBranch *string) (string, error) {
 		return *userSpecifiedBranch, nil
 	}
 
-	branch, _, err := git([]string{"rev-parse","--abbrev-ref","HEAD"}, []string{})
+	branch, _, err := git([]string{"rev-parse", "--abbrev-ref", "HEAD"})
 	if err != nil {
 		return "", fmt.Errorf("error reading current branch: %s", err)
 	}
@@ -60,18 +60,18 @@ func checkoutBranch(baseBranch, targetBranch string) error {
 	}
 	if branchExists {
 		log.Printf("Using existing branch %q", targetBranch)
-		_,_,err := git([]string{"checkout", targetBranch}, []string{})
+		_,_,err := git([]string{"checkout", targetBranch})
 		if err != nil {
 			return fmt.Errorf("error on git checkout %s: %s", targetBranch, err)
 		}
 	} else {
 		// make sure we're on the base branch before creating new branch
 		log.Printf("Creating new branch %q", targetBranch)
-		_,_,err := git([]string{"checkout", baseBranch}, []string{})
+		_,_,err := git([]string{"checkout", baseBranch})
 		if err != nil {
 			return fmt.Errorf("error on checkout %s: %s", baseBranch, err)
 		}
-		_,_,err = git([]string{"checkout","-b", targetBranch}, []string{})
+		_,_,err = git([]string{"checkout", "-b", targetBranch})
 		if err != nil {
 			return fmt.Errorf("error on git checkout  -b %s: %s", targetBranch, err)
 		}
