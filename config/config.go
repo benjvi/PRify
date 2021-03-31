@@ -36,7 +36,6 @@ func Parse(config io.Reader) (*Config, error) {
 			return nil, fmt.Errorf("validating push config: %q", err)
 		}
 	}
-
 	if c.PR != nil {
 		err = c.PR.Validate()
 		if err != nil {

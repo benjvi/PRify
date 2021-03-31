@@ -54,6 +54,10 @@ func ResolveBaseBranch(userSpecifiedBranch *string) (string, error) {
 
 func checkoutBranch(baseBranch, targetBranch string) error {
 	branchExists := false
+	// TODO: proper checking for existing branch
+	if targetBranch == baseBranch {
+		branchExists = true
+	}
 	if branchExists {
 		log.Printf("Using existing branch %q", targetBranch)
 		_,_,err := git([]string{"checkout", targetBranch}, []string{})
