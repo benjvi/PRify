@@ -11,4 +11,4 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && 
     apt update && \
     apt install gh && apt-get clean
 
-RUN wget "https://github.com/benjvi/PRify/releases/download/0.0.2/prify-linux-amd64" -O prify && install prify /usr/local/bin/ && rm prify
+RUN wget "https://github.com/benjvi/PRify/releases/download/0.0.3/prify-linux-amd64" -O prify && install prify /usr/local/bin/ && rm prify
