@@ -1,5 +1,5 @@
 branch:
-  name: "e2e-test-mvp-{{.subdir_name}}-{{.rand}}"
+  name: "e2e-test-mvp-{{.subdir_name}}"
 commit:
   message: "Autobumping manifests in {{.dir}} to update prod for {{.subdir_name}}"
 push: {}
