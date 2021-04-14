@@ -14,7 +14,7 @@ In a nutshell, PRify pushes code and automatically creates separate PRs for subf
 
 Download the latest binaries from the [releases page](https://github.com/benjvi/PRify/releases). 
 
-A dockerfile is also provided at `benjvi/prify:latest` for use in docker-based CI systems.
+A docker image is also provided at `benjvi/prify:latest` for use in docker-based CI systems.
 
 # Getting Started 
 
