@@ -24,7 +24,7 @@ In your CI pipeline:
 
 - Make changes to the directory
 - Setup any git or github credentials
-- Navigate to the directory and run `prify run`
+- Navigate to the directory containing the changes and execute `prify run`
 
 Depending on the configuration you set, the changes should been pushed to the git server and PRs may have been created.
 
