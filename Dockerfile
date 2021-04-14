@@ -1,3 +1,10 @@
+FROM golang
+
+RUN mkdir /build
+COPY . /build/
+WORKDIR /build
+RUN go build
+
 # TODO: multiarch
 FROM ubuntu
 ARG DEBIAN_FRONTEND=noninteractive
@@ -14,4 +21,4 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && 
 RUN wget "https://storage.googleapis.com/kubernetes-release/release/$(wget -O- https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" && install kubectl /usr/local/bin/
 RUN wget "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.8.8/kustomize_v3.8.8_linux_amd64.tar.gz" -O k.tar.gz && tar -xvzf k.tar.gz && install kustomize /usr/local/bin && rm k.tar.gz
 
-RUN wget "https://github.com/benjvi/PRify/releases/download/0.0.3/prify-linux-amd64" -O prify && install prify /usr/local/bin/ && rm prify
+COPY --from=0 --chmod=777 /build/prify /usr/local/bin/prify

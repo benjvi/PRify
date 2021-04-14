@@ -33,7 +33,7 @@ func createPR(title, body, baseBranch string) (string, error) {
 func checkPR(baseBranch string) (bool, error) {
 	_,stderr,err := gh([]string{"pr","view", baseBranch})
 	if err != nil {
-		if strings.Contains(stderr, "no open pull requests found for branch") {
+		if strings.Contains(stderr, "no open pull requests found for branch") || strings.Contains(stderr, "no pull requests found"){
 			return false, nil
 		} else {
 			return false, fmt.Errorf("error checking for existing pr: %s", err)
@@ -44,8 +44,8 @@ func checkPR(baseBranch string) (bool, error) {
 	return true, nil
 }
 
-func CreateOrUpdatePR(title, body, baseBranch string) (string, error) {
-	prExists, err := checkPR(baseBranch)
+func CreateOrUpdatePR(title, body, baseBranch, targetBranch string) (string, error) {
+	prExists, err := checkPR(targetBranch)
 	if err != nil {
 		return "", err
 	}

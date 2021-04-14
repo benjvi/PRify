@@ -84,7 +84,7 @@ func run(cmd *cobra.Command, args []string) {
 				log.Fatalf("PR template rendering for %q failed: %s", dir, err)
 			}
 
-			PRUrl, err := github.CreateOrUpdatePR(titleR, descriptionR, baseBranch)
+			PRUrl, err := github.CreateOrUpdatePR(titleR, descriptionR, baseBranch, tgtBranchR)
 			if err != nil {
 				log.Fatal(err)
 			}
