@@ -31,7 +31,7 @@ func createPR(title, body, baseBranch string) (string, error) {
 }
 
 func checkPR(baseBranch string) (bool, error) {
-	_,stderr,err := gh([]string{"pr","view", baseBranch})
+	stdout,stderr,err := gh([]string{"pr","view", baseBranch})
 	if err != nil {
 		if strings.Contains(stderr, "no open pull requests found for branch") || strings.Contains(stderr, "no pull requests found"){
 			return false, nil
@@ -40,6 +40,8 @@ func checkPR(baseBranch string) (bool, error) {
 		}
 
 	}
+	fmt.Printf("Command `gh pr view %s` stdout message: %q", baseBranch, stdout)
+	fmt.Printf("Command `gh pr view %s` stderr message: %q", baseBranch, stderr)
 	//TODO: get URL from the output, which occurs on the line with "View this pull request on GitHub:"
 	return true, nil
 }
