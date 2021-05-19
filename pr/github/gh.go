@@ -3,6 +3,7 @@ package github
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os/exec"
 	"strings"
 )
@@ -30,24 +31,23 @@ func createPR(title, body, baseBranch string) (string, error) {
 	return strings.TrimSpace(url), nil
 }
 
-func checkPR(baseBranch string) (bool, error) {
-	stdout,stderr,err := gh([]string{"pr","view", baseBranch})
+func checkPRExists(baseBranch string) (bool, error) {
+	stdout,stderr,err := gh([]string{"pr","view", baseBranch, "--json",
+		"state,url", "-q", "select(.state == \"OPEN\")" })
 	if err != nil {
-		if strings.Contains(stderr, "no open pull requests found for branch") || strings.Contains(stderr, "no pull requests found"){
-			return false, nil
-		} else {
 			return false, fmt.Errorf("error checking for existing pr: %s", err)
-		}
-
 	}
-	fmt.Printf("Command `gh pr view %s` stdout message: %q", baseBranch, stdout)
-	fmt.Printf("Command `gh pr view %s` stderr message: %q", baseBranch, stderr)
+	log.Printf("Command `gh pr view %s` stdout message: %q", baseBranch, stdout)
+	log.Printf("Command `gh pr view %s` stderr message: %q", baseBranch, stderr)
 	//TODO: get URL from the output, which occurs on the line with "View this pull request on GitHub:"
-	return true, nil
+	if strings.Contains(stdout,"url") {
+		return true, nil
+	}
+	return false, nil
 }
 
 func CreateOrUpdatePR(title, body, baseBranch, targetBranch string) (string, error) {
-	prExists, err := checkPR(targetBranch)
+	prExists, err := checkPRExists(targetBranch)
 	if err != nil {
 		return "", err
 	}
