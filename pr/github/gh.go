@@ -61,7 +61,7 @@ func (m *defaultPRManager) checkPRExists(baseBranch string) (bool, error) {
 	}
 	log.Printf("Command `run pr view %s` stdout message: %q", baseBranch, stdout)
 	log.Printf("Command `run pr view %s` stderr message: %q", baseBranch, stderr)
-	//TODO: get URL from the output, which occurs on the line with "View this pull request on GitHub:"
+	//TODO: get URL from the output
 	if strings.Contains(stdout,"url") {
 		return true, nil
 	}
